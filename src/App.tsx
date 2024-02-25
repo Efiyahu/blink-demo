@@ -80,24 +80,11 @@ function App() {
   }, []);
 
   return (
-    <>
-      <div id="screen-initial">
-        <h1 id="msg">Loading...</h1>
-        <progress id="load-progress" value="0" max="100"></progress>
-      </div>
-
-      <div id="screen-start" className="hidden">
-        <a href="#" id="start-scan">
-          Start scan
-        </a>
-      </div>
-
-      <div id="screen-scanning" className="hidden">
-        <video id="camera-feed" playsInline></video>
-        <canvas id="camera-feedback"></canvas>
-        <p id="camera-guides">Point the camera towards Payment cards</p>
-      </div>
-    </>
+    <div id="screen-scanning">
+      <video id="camera-feed" playsInline></video>
+      <canvas id="camera-feedback"></canvas>
+      <p id="camera-guides">Point the camera towards Payment cards</p>
+    </div>
   );
 }
 
