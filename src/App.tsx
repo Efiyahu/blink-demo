@@ -1,9 +1,10 @@
 import * as BlinkCardSDK from '@microblink/blinkcard-in-browser-sdk';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import './App.css';
 
 function App() {
+  const [state, setState] = useState<BlinkCardSDK.BlinkCardRecognizerResult | null>(null);
   useEffect(() => {
     const initializeBlinkCardSDK = async () => {
       // Check if browser is supported
@@ -54,6 +55,7 @@ function App() {
 
         if (processResult !== BlinkCardSDK.RecognizerResultState.Empty) {
           const blinkCardResult = await recognizer.getResult();
+          setState(blinkCardResult);
           if (blinkCardResult.state !== BlinkCardSDK.RecognizerResultState.Empty) {
             console.log('BlinkCard results', blinkCardResult);
 
@@ -83,7 +85,8 @@ function App() {
     <div id="screen-scanning">
       <video id="camera-feed" playsInline></video>
       <canvas id="camera-feedback"></canvas>
-      <p id="camera-guides">Point the camera towards Payment cards</p>
+      <p id="camera-guides">Point the camera towards Payment cards</p
+      {JSON.stringify(state)}
     </div>
   );
 }
