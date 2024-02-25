@@ -5,6 +5,7 @@ import './App.css';
 
 function App() {
   const [state, setState] = useState<BlinkCardSDK.BlinkCardRecognizerResult | null>(null);
+  const [flip, setFlip] = useState<string>('');
   useEffect(() => {
     const initializeBlinkCardSDK = async () => {
       // Check if browser is supported
@@ -30,7 +31,7 @@ function App() {
     initializeBlinkCardSDK()
       .then(async (wasmSDK) => {
         const callbacks = {
-          onFirstSideResult: () => alert('Flip the card'),
+          onFirstSideResult: () => setFlip('Flip the card'),
         };
         const recognizer = await BlinkCardSDK.createBlinkCardRecognizer(wasmSDK);
         const recognizerRunner = await BlinkCardSDK.createRecognizerRunner(
@@ -87,6 +88,7 @@ function App() {
       <canvas id="camera-feedback"></canvas>
       <p id="camera-guides">Point the camera towards Payment cards</p>
       {'state update: ' + JSON.stringify(state)}
+      {flip}
     </div>
   );
 }
