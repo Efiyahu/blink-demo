@@ -51,7 +51,7 @@ function App() {
           );
         return { videoRecognizer, recognizer, recognizerRunner };
       })
-      .then(async ({ videoRecognizer, recognizer }) => {
+      .then(async ({ videoRecognizer, recognizer, recognizerRunner }) => {
         const processResult = await videoRecognizer.recognize();
 
         if (processResult !== BlinkCardSDK.RecognizerResultState.Empty) {
@@ -60,22 +60,18 @@ function App() {
           if (blinkCardResult.state !== BlinkCardSDK.RecognizerResultState.Empty) {
             console.log('BlinkCard results', blinkCardResult);
 
-            // const firstAndLastName = blinkCardResult.owner;
-            // const cardNumber = blinkCardResult.cardNumber;
-            // const dateOfExpiry = {
-            //   year: blinkCardResult.expiryDate.year,
-            //   month: blinkCardResult.expiryDate.month,
-            // };
+            setFlip(
+              `${blinkCardResult.owner} ${blinkCardResult.cardNumber} ${blinkCardResult.expiryDate.year} ${blinkCardResult.expiryDate.month}`
+            );
           }
-          return blinkCardResult;
 
-          //   videoRecognizer?.releaseVideoFeed();
+          videoRecognizer?.releaseVideoFeed();
 
-          // // Release memory on WebAssembly heap used by the RecognizerRunner
-          // recognizerRunner?.delete();
+          // Release memory on WebAssembly heap used by the RecognizerRunner
+          recognizerRunner?.delete();
 
-          // // Release memory on WebAssembly heap used by the recognizer
-          // recognizer?.delete();
+          // Release memory on WebAssembly heap used by the recognizer
+          recognizer?.delete();
         } else {
           alert('Could not extract information!');
         }
