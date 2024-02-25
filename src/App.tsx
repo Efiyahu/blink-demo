@@ -9,7 +9,7 @@ function App() {
       // Check if browser is supported
       if (BlinkCardSDK.isBrowserSupported()) {
         const loadSettings = new BlinkCardSDK.WasmSDKLoadSettings(
-          'sRwAAAYJbG9jYWxob3N0r/lOPgo/w35CpOFWKOo/YeWbF7ZF/oo2KCQLKIncTPTXNoWHYpr41HZEFnl0jQAVBIwaK+EZDE9tq7nlX7jI9hmBMbc0fGUxGU1lE6HJp+7Ac0ShKm6/6hJ7gh5HxfpzekfZ1uTmZP36wzypNQjUYZZBIy1f3c9GwtQHE4Tg6BmPd61PCPKf8AU='
+          'sRwAAAYgdHJhbnF1aWwtZmF1bi1hNGNjNTkubmV0bGlmeS5hcHDXf9Q0aVtnvt6Sl5eT3TqUfKkqrb6Yt9QZZWpGq/2D/IFHmvFSlun1UBdVpp+ubS6U8CYUYQuJUOCGFtqKQ/Cz+ri3KAFg3dMYHwu5jUt1s7jFZAkigTEKRP+0ZLQA25EHL2FwaNALzbMwm1g2W/1jgj9C5VbATsWll9RU8Z0W6hxBUz3YQHHAuw=='
         );
 
         try {
