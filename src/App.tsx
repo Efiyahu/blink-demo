@@ -36,7 +36,7 @@ function App() {
         const recognizerRunner = await BlinkCardSDK.createRecognizerRunner(
           wasmSDK,
           [recognizer],
-          true,
+          false,
           callbacks
         );
         return { recognizerRunner, recognizer };
