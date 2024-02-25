@@ -86,7 +86,7 @@ function App() {
       <video id="camera-feed" playsInline></video>
       <canvas id="camera-feedback"></canvas>
       <p id="camera-guides">Point the camera towards Payment cards</p>
-      {'state: ' + JSON.stringify(state)}
+      {'state update: ' + JSON.stringify(state)}
     </div>
   );
 }
