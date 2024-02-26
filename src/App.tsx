@@ -82,9 +82,9 @@ function App() {
     <div id="screen-scanning">
       <video id="camera-feed" playsInline></video>
       <p id="camera-guides">Point the camera towards Payment cards</p>
-      <div style={{ position: 'relative' }}>
-        <p id="camera-guides">{flip}</p>
-        <p id="camera-guides"> {state && JSON.stringify(state)}</p>
+      <div style={{ position: 'relative', width: '100%', padding: '10px', textAlign: 'center' }}>
+        <p className="text">{flip}</p>
+        <p className="text"> {state && JSON.stringify(state)}</p>
       </div>
     </div>
   );

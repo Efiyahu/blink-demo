@@ -65,6 +65,11 @@ textarea {
   font-weight: bold;
 }
 
+.text {
+  width: '100%';
+  padding: 30px;
+}
+
 /* Auxiliary classes */
 .hidden {
   display: none !important;
