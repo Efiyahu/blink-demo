@@ -83,7 +83,7 @@ function App() {
       <video id="camera-feed" playsInline></video>
       <p id="camera-guides">Point the camera towards Payment cards</p>
       <p className="camera-guides">{flip}</p>
-      {state && JSON.stringify(state) + 'if there is state'}
+      <p className="camera-guides"> {state && JSON.stringify(state) + 'if there is state'}</p>
     </div>
   );
 }
