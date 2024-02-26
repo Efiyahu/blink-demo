@@ -57,10 +57,12 @@ function App() {
           const blinkCardResult = await recognizer.getResult();
           if (blinkCardResult.state !== BlinkCardSDK.RecognizerResultState.Empty) {
             console.log('BlinkCard results', blinkCardResult);
-
-            setFlip(
-              `${blinkCardResult.owner} ${blinkCardResult.cardNumber} ${blinkCardResult.expiryDate.year} ${blinkCardResult.expiryDate.month}`
-            );
+            setFlip([
+              `Owner: ${blinkCardResult.owner}`,
+              `Card Number: ${blinkCardResult.cardNumber}`,
+              `Ex Year: ${blinkCardResult.expiryDate.year}`,
+              `Ex Month: ${blinkCardResult.expiryDate.month}`,
+            ]);
           }
 
           videoRecognizer?.releaseVideoFeed();
