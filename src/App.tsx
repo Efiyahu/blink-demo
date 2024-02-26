@@ -82,8 +82,7 @@ function App() {
     <div id="screen-scanning">
       <video id="camera-feed" playsInline></video>
       <p id="camera-guides">Point the camera towards Payment cards</p>
-      {'state update: ' + JSON.stringify(state)}
-      {flip}
+      <p className="camera-guides">{flip}</p>
     </div>
   );
 }
