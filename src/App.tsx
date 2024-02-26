@@ -81,7 +81,6 @@ function App() {
   return (
     <div id="screen-scanning">
       <video id="camera-feed" playsInline></video>
-      <canvas id="camera-feedback"></canvas>
       <p id="camera-guides">Point the camera towards Payment cards</p>
       {'state update: ' + JSON.stringify(state)}
       {flip}
