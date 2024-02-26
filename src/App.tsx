@@ -59,6 +59,7 @@ function App() {
             setFlip([
               `Owner: ${blinkCardResult.owner}`,
               `Card Number: ${blinkCardResult.cardNumber}`,
+              `CVV: ${blinkCardResult.cvv}`,
               `Ex Year: ${blinkCardResult.expiryDate.year}`,
               `Ex Month: ${blinkCardResult.expiryDate.month}`,
             ]);
