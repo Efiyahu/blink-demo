@@ -59,6 +59,8 @@ function App() {
             console.log('BlinkCard results', blinkCardResult);
             setFlip([
               `Owner: ${blinkCardResult.owner}`,
+              `Prefix: ${blinkCardResult.cardNumberPrefix}`,
+              `IBan: ${blinkCardResult.iban}`,
               `Card Number: ${blinkCardResult.cardNumber}`,
               `Ex Year: ${blinkCardResult.expiryDate.year}`,
               `Ex Month: ${blinkCardResult.expiryDate.month}`,
