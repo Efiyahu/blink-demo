@@ -84,7 +84,7 @@ function App() {
       <p id="camera-guides">Point the camera towards Payment cards</p>
       <div style={{ position: 'relative', width: '100%', padding: '10px', textAlign: 'center' }}>
         <p className="text">{flip}</p>
-        <p className="text"> {state && JSON.stringify(state)}</p>
+        {/* <p className="text"> {state && JSON.stringify(state)}</p> */}
       </div>
     </div>
   );
