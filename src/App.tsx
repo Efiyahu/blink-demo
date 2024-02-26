@@ -4,8 +4,7 @@ import { useEffect, useState } from 'react';
 import './App.css';
 
 function App() {
-  const [state, setState] = useState<BlinkCardSDK.BlinkCardRecognizerResult | null>(null);
-  const [flip, setFlip] = useState<string>('');
+  const [flip, setFlip] = useState<string[]>([]);
   useEffect(() => {
     const initializeBlinkCardSDK = async () => {
       // Check if browser is supported
@@ -31,7 +30,7 @@ function App() {
     initializeBlinkCardSDK()
       .then(async (wasmSDK) => {
         const callbacks = {
-          onFirstSideResult: () => setFlip('Flip the card'),
+          onFirstSideResult: () => setFlip(['Flip the card']),
         };
         const recognizer = await BlinkCardSDK.createBlinkCardRecognizer(wasmSDK);
         const recognizerRunner = await BlinkCardSDK.createRecognizerRunner(
@@ -56,7 +55,6 @@ function App() {
 
         if (processResult !== BlinkCardSDK.RecognizerResultState.Empty) {
           const blinkCardResult = await recognizer.getResult();
-          setState(blinkCardResult);
           if (blinkCardResult.state !== BlinkCardSDK.RecognizerResultState.Empty) {
             console.log('BlinkCard results', blinkCardResult);
 
@@ -83,8 +81,9 @@ function App() {
       <video id="camera-feed" playsInline></video>
       <p id="camera-guides">Point the camera towards Payment cards</p>
       <div style={{ position: 'relative', width: '100%', padding: '10px', textAlign: 'center' }}>
-        <p className="text">{flip}</p>
-        {/* <p className="text"> {state && JSON.stringify(state)}</p> */}
+        {flip.map((fl) => (
+          <p className="text">{fl}</p>
+        ))}
       </div>
     </div>
   );
