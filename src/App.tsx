@@ -56,11 +56,8 @@ function App() {
         if (processResult !== BlinkCardSDK.RecognizerResultState.Empty) {
           const blinkCardResult = await recognizer.getResult();
           if (blinkCardResult.state !== BlinkCardSDK.RecognizerResultState.Empty) {
-            console.log('BlinkCard results', blinkCardResult);
             setFlip([
               `Owner: ${blinkCardResult.owner}`,
-              `Prefix: ${blinkCardResult.cardNumberPrefix}`,
-              `IBan: ${blinkCardResult.iban}`,
               `Card Number: ${blinkCardResult.cardNumber}`,
               `Ex Year: ${blinkCardResult.expiryDate.year}`,
               `Ex Month: ${blinkCardResult.expiryDate.month}`,
