@@ -82,12 +82,18 @@ const VideoRecognizer = () => {
       });
   }, []);
 
+  const isTransparent = isShown ? { color: 'white' } : { color: 'black' };
+
   return (
     <div id="screen-scanning">
       <video id="camera-feed" playsInline></video>
-      <p id="camera-guides">Point the camera towards Payment cards</p>
-      <p id="user-guides">user id: {userId ?? '0'}</p>
-      <div id="flip-guides" style={isShown ? { color: 'red' } : { color: 'blue' }}>
+      <p id="camera-guides" style={isTransparent}>
+        Point the camera towards Payment cards
+      </p>
+      <p id="user-guides" style={isTransparent}>
+        user id: {userId ?? '0'}
+      </p>
+      <div id="flip-guides" style={isTransparent}>
         {flip.map((fl) => (
           <p className="text">{fl}</p>
         ))}
