@@ -6,8 +6,8 @@ function App() {
   return (
     <>
       <Routes>
-        <Route element={<VideoRecognizer />} path="/:userId" />
         <Route element={<VideoRecognizer />} path="/" />
+        <Route element={<VideoRecognizer />} path="/:userId" />
       </Routes>
     </>
   );
