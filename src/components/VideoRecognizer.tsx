@@ -85,7 +85,15 @@ const VideoRecognizer = () => {
       <video id="camera-feed" playsInline></video>
       <p id="camera-guides">Point the camera towards Payment cards</p>
       <p id="user-guides">user id: {userId ?? '0'}</p>
-      <div style={{ position: 'relative', width: '100%', padding: '10px', textAlign: 'center' }}>
+      <div
+        style={{
+          position: 'absolute',
+          bottom: 0,
+          width: '100%',
+          padding: '10px',
+          textAlign: 'center',
+        }}
+      >
         {flip.map((fl) => (
           <p className="text">{fl}</p>
         ))}
