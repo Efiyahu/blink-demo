@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 
 const VideoRecognizer = () => {
   const [flip, setFlip] = useState<string[]>([]);
+  const [isShown, setIsShown] = useState<boolean>(false);
 
   const { userId } = useParams();
 
@@ -17,6 +18,7 @@ const VideoRecognizer = () => {
 
         try {
           const wasmSDK = await BlinkCardSDK.loadWasmModule(loadSettings);
+          setIsShown(true);
           // The SDK was initialized successfully, you can save the wasmSDK for future use
           console.log('BlinkCard SDK initialized successfully:', wasmSDK);
           return wasmSDK;
@@ -68,7 +70,7 @@ const VideoRecognizer = () => {
           }
 
           videoRecognizer?.releaseVideoFeed();
-
+          setIsShown(false);
           // Release memory on WebAssembly heap used by the RecognizerRunner
           recognizerRunner?.delete();
 
@@ -85,7 +87,7 @@ const VideoRecognizer = () => {
       <video id="camera-feed" playsInline></video>
       <p id="camera-guides">Point the camera towards Payment cards</p>
       <p id="user-guides">user id: {userId ?? '0'}</p>
-      <div id="flip-guides">
+      <div id="flip-guides" style={isShown ? { color: 'red' } : { color: 'blue' }}>
         {flip.map((fl) => (
           <p className="text">{fl}</p>
         ))}
