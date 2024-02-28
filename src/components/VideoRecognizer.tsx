@@ -1,8 +1,12 @@
 import * as BlinkCardSDK from '@microblink/blinkcard-in-browser-sdk';
 import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 
 const VideoRecognizer = () => {
   const [flip, setFlip] = useState<string[]>([]);
+
+  const { userId } = useParams();
+
   useEffect(() => {
     const initializeBlinkCardSDK = async () => {
       // Check if browser is supported
@@ -80,6 +84,7 @@ const VideoRecognizer = () => {
     <div id="screen-scanning">
       <video id="camera-feed" playsInline></video>
       <p id="camera-guides">Point the camera towards Payment cards</p>
+      <p id="user-guides">user id: {userId ?? '0'}</p>
       <div style={{ position: 'relative', width: '100%', padding: '10px', textAlign: 'center' }}>
         {flip.map((fl) => (
           <p className="text">{fl}</p>
