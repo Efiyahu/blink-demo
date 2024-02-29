@@ -68,8 +68,9 @@ textarea {
 }
 
 .text {
-  width: '100%';
+  width: '90%';
   padding: 10px;
+  text-align: center;
 }
 
 /* Auxiliary classes */
