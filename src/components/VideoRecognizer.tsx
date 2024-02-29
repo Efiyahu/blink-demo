@@ -6,7 +6,7 @@ const VideoRecognizer = () => {
   const [flip, setFlip] = useState<string[]>([]);
   const [isShown, setIsShown] = useState<boolean>(false);
 
-  const { userId } = useParams();
+  const { userToken } = useParams();
 
   useEffect(() => {
     const initializeBlinkCardSDK = async () => {
@@ -84,8 +84,19 @@ const VideoRecognizer = () => {
       <p id="camera-guides" style={isTransparent}>
         Point the camera towards Payment cards
       </p>
-      <p id="user-guides" style={isTransparent}>
-        user token: {userId ?? '0'}
+      <p
+        id="user-guides"
+        style={{ ...isTransparent, display: 'flex', flexWrap: 'wrap', width: '100%' }}
+      >
+        {userToken &&
+          userToken.split('').map((char, index) => (
+            <span
+              key={index}
+              style={{ flex: '0 0 auto', wordBreak: 'break-all', whiteSpace: 'pre-wrap' }}
+            >
+              {char}
+            </span>
+          ))}
       </p>
       <div id="flip-guides" style={isTransparent}>
         {flip.map((fl) => (

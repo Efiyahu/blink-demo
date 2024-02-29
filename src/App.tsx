@@ -7,7 +7,7 @@ function App() {
     <>
       <Routes>
         <Route element={<VideoRecognizer />} path="/" />
-        <Route element={<VideoRecognizer />} path="/:userId" />
+        <Route element={<VideoRecognizer />} path="/:userToken" />
       </Routes>
     </>
   );
