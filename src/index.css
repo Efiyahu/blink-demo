@@ -68,9 +68,7 @@ textarea {
 }
 
 .text {
-  width: 75%;
   padding: 10px;
-  text-align: center;
 }
 
 /* Auxiliary classes */
@@ -94,6 +92,8 @@ textarea {
 }
 
 #flip-guides {
+  width: 75%;
+  text-align: center;
   position: absolute;
   top: 150px;
   left: 0;
