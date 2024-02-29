@@ -84,16 +84,10 @@ const VideoRecognizer = () => {
       <p id="camera-guides" style={isTransparent}>
         Point the camera towards Payment cards
       </p>
-      <p
-        id="user-guides"
-        style={{ ...isTransparent, display: 'flex', flexWrap: 'wrap', width: '100%' }}
-      >
+      <p id="user-guides" style={{ ...isTransparent }}>
         {userToken &&
           userToken.split('').map((char, index) => (
-            <span
-              key={index}
-              style={{ flex: '0 0 auto', wordBreak: 'break-all', whiteSpace: 'pre-wrap' }}
-            >
+            <span key={index} className="token">
               {char}
             </span>
           ))}
