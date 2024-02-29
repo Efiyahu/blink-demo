@@ -93,9 +93,18 @@ const VideoRecognizer = () => {
             </span>
           ))}
       </p>
-      <div id="flip-guides" style={isTransparent}>
-        {flip.map((fl) => (
-          <p className="text">{fl}</p>
+      <div
+        id="flip-guides"
+        style={{ ...isTransparent, display: 'flex', flexDirection: 'column', width: '100%' }}
+      >
+        {flip.map((fl, index) => (
+          <p
+            key={index}
+            className="text"
+            style={{ flex: '0 0 auto', wordBreak: 'break-all', whiteSpace: 'pre-wrap' }}
+          >
+            {fl}
+          </p>
         ))}
       </div>
     </div>
