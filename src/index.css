@@ -19,8 +19,6 @@ html {
 #screen-initial,
 #screen-scanning {
   display: block;
-  width: 100vh;
-  height: 100vw;
 }
 
 /* Rules for better readability */
@@ -43,8 +41,8 @@ textarea {
 /* Camera feedback */
 #screen-scanning {
   position: relative;
-  height: 100%;
-  width: 100%;
+  width: 100vh;
+  height: 100vw;
 }
 
 #camera-guides {
