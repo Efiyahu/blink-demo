@@ -87,7 +87,7 @@ textarea {
 
 #flip-guides {
   position: absolute;
-  bottom: 20px;
+  top: 60px;
   left: 0;
   right: 0;
   text-align: center;
