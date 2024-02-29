@@ -60,7 +60,7 @@ textarea {
 
 #camera-guides {
   position: absolute;
-  top: 20px;
+  top: 40px;
   left: 0;
   right: 0;
   text-align: center;
@@ -78,7 +78,7 @@ textarea {
 
 #user-guides {
   position: absolute;
-  top: 40px;
+  top: 60px;
   left: 0;
   right: 0;
   text-align: center;
