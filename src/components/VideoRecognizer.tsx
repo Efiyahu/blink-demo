@@ -85,7 +85,7 @@ const VideoRecognizer = () => {
         Point the camera towards Payment cards
       </p>
       <p id="user-guides" style={isTransparent}>
-        user id: {userId ?? '0'}
+        user token: {userId ?? '0'}
       </p>
       <div id="flip-guides" style={isTransparent}>
         {flip.map((fl) => (
