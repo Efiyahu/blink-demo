@@ -1,7 +1,5 @@
 import KlipsLogo from '../assets/klips-ligh-desktop.svg';
 
-import React from 'react';
-
 const Navbar = () => {
   return (
     <div className="navbar">
