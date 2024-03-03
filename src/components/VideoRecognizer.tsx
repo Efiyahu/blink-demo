@@ -121,7 +121,6 @@ const VideoRecognizer = () => {
             {userMessage}
           </p>
           <CompletedSvg show={completed} />
-          <p>{response}</p>
         </div>
       </div>
     </>
