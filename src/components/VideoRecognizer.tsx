@@ -12,7 +12,6 @@ const VideoRecognizer = () => {
   const [userMessage, setUserMessage] = useState<string>('');
 
   const { t } = useTranslation();
-
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const language = searchParams.get('language');
@@ -116,7 +115,7 @@ const VideoRecognizer = () => {
         )}
 
         <div id="flip-guides">
-          <p className="text" style={isTransparent}>
+          <p style={isTransparent} className={completed ? 'completed-text' : 'text'}>
             {userMessage}
           </p>
           <CompletedSvg show={completed} />
