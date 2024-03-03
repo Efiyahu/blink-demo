@@ -2,5 +2,6 @@
   "flip": "Odwróć kartę",
   "cameraGuide": "Nakieruj aparat na kartę płatniczą",
   "errorExtracting": "Nie można wydobyć informacji!",
-  "paymentVerification": "Weryfikacja płatności"
+  "paymentVerification": "Weryfikacja płatności",
+  "completed": "Weryfikacja karty płatniczej zakończona pomyślnie!"
 }

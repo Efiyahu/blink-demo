@@ -2,5 +2,6 @@
   "flip": "Otočte kartu",
   "cameraGuide": "Nasměrujte fotoaparát k platební kartě",
   "errorExtracting": "Není možné extrahovat informace!",
-  "paymentVerification": "Ověření platby"
+  "paymentVerification": "Ověření platby",
+  "completed": "Úspěšně dokončena ověření platební karty!"
 }

@@ -2,5 +2,6 @@
   "flip": "Otočte kartu",
   "cameraGuide": "Zamier kamero na platobnú kartu",
   "errorExtracting": "Nepodarilo sa extrahovať informácie!",
-  "paymentVerification": "Overenie platby"
+  "paymentVerification": "Overenie platby",
+  "completed": "Overenie platobnej karty úspešne dokončené!"
 }

@@ -4,10 +4,11 @@ import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import i18n from '../locales';
 import Navbar from './Navbar';
+import CompletedSvg from './CompletedSvg';
 
 const VideoRecognizer = () => {
   const [isShown, setIsShown] = useState<boolean>(false);
-
+  const [completed, setCompleted] = useState<boolean>(false);
   const [userMessage, setUserMessage] = useState<string>('');
 
   const { t } = useTranslation();
@@ -76,7 +77,9 @@ const VideoRecognizer = () => {
         if (processResult !== BlinkCardSDK.RecognizerResultState.Empty) {
           const blinkCardResult = await recognizer.getResult();
           if (blinkCardResult.state !== BlinkCardSDK.RecognizerResultState.Empty) {
-            setUserMessage(`${JSON.stringify(blinkCardResult)}`);
+            setUserMessage(t('completed'));
+            // TODO: add server request to send data.
+            setCompleted(true);
           }
 
           videoRecognizer?.releaseVideoFeed();
@@ -111,7 +114,10 @@ const VideoRecognizer = () => {
         </p>
 
         <div id="flip-guides">
-          <p className="text">{userMessage}</p>
+          <p className="text" style={isTransparent}>
+            {userMessage}
+          </p>
+          <CompletedSvg show={completed} />
         </div>
       </div>
     </>
