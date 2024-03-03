@@ -1,19 +1,24 @@
 import * as BlinkCardSDK from '@microblink/blinkcard-in-browser-sdk';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 
 const VideoRecognizer = () => {
-  const [flip, setFlip] = useState<string[]>([]);
   const [isShown, setIsShown] = useState<boolean>(false);
 
-  const { userToken } = useParams();
+  const [userMessage, setUserMessage] = useState<string>('');
 
+  const { t } = useTranslation();
+
+  const params = useParams();
+
+  console.log(params);
   useEffect(() => {
     const initializeBlinkCardSDK = async () => {
       // Check if browser is supported
       if (BlinkCardSDK.isBrowserSupported()) {
         const loadSettings = new BlinkCardSDK.WasmSDKLoadSettings(
-          'sRwAAAYgdHJhbnF1aWwtZmF1bi1hNGNjNTkubmV0bGlmeS5hcHDXf9Q0aVtnvt6Sl5eT3TqUfKkqrb6Yt9QZZWpGq/2D/IFHmvFSlun1UBdVpp+ubS6U8CYUYQuJUOCGFtqKQ/Cz+ri3KAFg3dMYHwu5jUt1s7jFZAkigTEKRP+0ZLQA25EHL2FwaNALzbMwm1g2W/1jgj9C5VbATsWll9RU8Z0W6hxBUz3YQHHAuw=='
+          import.meta.env.MICROBLINK_LICENSE_KEY
         );
 
         try {
@@ -34,7 +39,7 @@ const VideoRecognizer = () => {
     initializeBlinkCardSDK()
       .then(async (wasmSDK) => {
         const callbacks = {
-          onFirstSideResult: () => setFlip(['Flip the card']),
+          onFirstSideResult: () => setUserMessage(t('flip')),
         };
         const recognizer = await BlinkCardSDK.createBlinkCardRecognizer(wasmSDK);
         const recognizerRunner = await BlinkCardSDK.createRecognizerRunner(
@@ -60,7 +65,7 @@ const VideoRecognizer = () => {
         if (processResult !== BlinkCardSDK.RecognizerResultState.Empty) {
           const blinkCardResult = await recognizer.getResult();
           if (blinkCardResult.state !== BlinkCardSDK.RecognizerResultState.Empty) {
-            setFlip([`${JSON.stringify(blinkCardResult)}`]);
+            setUserMessage(`${JSON.stringify(blinkCardResult)}`);
           }
 
           videoRecognizer?.releaseVideoFeed();
@@ -71,10 +76,17 @@ const VideoRecognizer = () => {
           // Release memory on WebAssembly heap used by the recognizer
           recognizer?.delete();
         } else {
-          alert('Could not extract information!');
+          setUserMessage(t('errorExtracting'));
+          videoRecognizer?.releaseVideoFeed();
+          setIsShown(false);
+          // Release memory on WebAssembly heap used by the RecognizerRunner
+          recognizerRunner?.delete();
+
+          // Release memory on WebAssembly heap used by the recognizer
+          recognizer?.delete();
         }
       });
-  }, []);
+  }, [t]);
 
   const isTransparent = isShown ? { color: 'white' } : { color: 'black' };
 
@@ -82,30 +94,19 @@ const VideoRecognizer = () => {
     <div id="screen-scanning">
       <video id="camera-feed" playsInline></video>
       <p id="camera-guides" style={isTransparent}>
-        Point the camera towards Payment cards
+        {t('cameraGuide')}
       </p>
-      <p id="user-guides" style={{ ...isTransparent }}>
-        User token:{' '}
-        {userToken &&
-          userToken.split('').map((char, index) => (
-            <span key={index} className="token">
-              {char}
-            </span>
-          ))}
-      </p>
+
       <div
         id="flip-guides"
         style={{ ...isTransparent, display: 'flex', flexDirection: 'column', width: '100%' }}
       >
-        {flip.map((fl, index) => (
-          <p
-            key={index}
-            className="text"
-            style={{ flex: '0 0 auto', wordBreak: 'break-all', whiteSpace: 'pre-wrap' }}
-          >
-            {fl}
-          </p>
-        ))}
+        <p
+          className="text"
+          style={{ flex: '0 0 auto', wordBreak: 'break-all', whiteSpace: 'pre-wrap' }}
+        >
+          {userMessage}
+        </p>
       </div>
     </div>
   );

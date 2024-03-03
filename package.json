@@ -11,8 +11,10 @@
   },
   "dependencies": {
     "@microblink/blinkcard-in-browser-sdk": "^2.7.0",
+    "i18next": "^23.10.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-i18next": "^14.0.5",
     "react-router-dom": "^6.22.1",
     "react-webcam": "^7.2.0"
   },
