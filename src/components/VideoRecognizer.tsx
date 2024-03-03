@@ -11,14 +11,13 @@ const VideoRecognizer = () => {
   const { t } = useTranslation();
 
   const params = useParams();
-
   console.log(params);
   useEffect(() => {
     const initializeBlinkCardSDK = async () => {
       // Check if browser is supported
       if (BlinkCardSDK.isBrowserSupported()) {
         const loadSettings = new BlinkCardSDK.WasmSDKLoadSettings(
-          import.meta.env.MICROBLINK_LICENSE_KEY
+          import.meta.env.VITE_MICROBLINK_LICENSE_KEY
         );
 
         try {
