@@ -1,7 +1,9 @@
 import * as BlinkCardSDK from '@microblink/blinkcard-in-browser-sdk';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import i18n from '../locales';
+import Navbar from './Navbar';
 
 const VideoRecognizer = () => {
   const [isShown, setIsShown] = useState<boolean>(false);
@@ -10,8 +12,18 @@ const VideoRecognizer = () => {
 
   const { t } = useTranslation();
 
-  const params = useParams();
-  console.log(params);
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const language = searchParams.get('language');
+  // const userToken = searchParams.get('userToken');
+  // const paymentID = searchParams.get('paymentID');
+
+  // Set the Language based on the language code that's passed
+  useEffect(() => {
+    i18n.changeLanguage(language as string | undefined);
+  }, [language]);
+
+  // Init the blinkcard recognizer and begin recognition
   useEffect(() => {
     const initializeBlinkCardSDK = async () => {
       // Check if browser is supported
@@ -90,24 +102,19 @@ const VideoRecognizer = () => {
   const isTransparent = isShown ? { color: 'white' } : { color: 'black' };
 
   return (
-    <div id="screen-scanning">
-      <video id="camera-feed" playsInline></video>
-      <p id="camera-guides" style={isTransparent}>
-        {t('cameraGuide')}
-      </p>
-
-      <div
-        id="flip-guides"
-        style={{ ...isTransparent, display: 'flex', flexDirection: 'column', width: '100%' }}
-      >
-        <p
-          className="text"
-          style={{ flex: '0 0 auto', wordBreak: 'break-all', whiteSpace: 'pre-wrap' }}
-        >
-          {userMessage}
+    <>
+      <Navbar />
+      <div id="screen-scanning">
+        <video id="camera-feed" playsInline></video>
+        <p id="camera-guides" style={isTransparent}>
+          {t('cameraGuide')}
         </p>
+
+        <div id="flip-guides">
+          <p className="text">{userMessage}</p>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

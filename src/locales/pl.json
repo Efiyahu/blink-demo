@@ -1,5 +1,6 @@
 {
   "flip": "Odwróć kartę",
   "cameraGuide": "Nakieruj aparat na kartę płatniczą",
-  "errorExtracting": "Nie można wydobyć informacji!"
+  "errorExtracting": "Nie można wydobyć informacji!",
+  "paymentVerification": "Weryfikacja płatności"
 }
