@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@microblink/blinkcard-in-browser-sdk": "^2.7.0",
+    "axios": "^1.6.7",
     "framer-motion": "^11.0.8",
     "i18next": "^23.10.0",
     "react": "^18.2.0",

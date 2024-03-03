@@ -5,10 +5,13 @@ import { useLocation } from 'react-router-dom';
 import i18n from '../locales';
 import Navbar from './Navbar';
 import CompletedSvg from './CompletedSvg';
+import FailedSvg from './FailedSvg';
+// import axios from 'axios';
 
 const VideoRecognizer = () => {
   const [isShown, setIsShown] = useState<boolean>(false);
   const [completed, setCompleted] = useState<boolean>(false);
+  // const [failed, setFailed] = useState<boolean>(false);
   const [userMessage, setUserMessage] = useState<string>('');
 
   const { t } = useTranslation();
@@ -16,7 +19,7 @@ const VideoRecognizer = () => {
   const searchParams = new URLSearchParams(location.search);
   const language = searchParams.get('language');
   // const userToken = searchParams.get('userToken');
-  // const paymentID = searchParams.get('paymentID');
+  // const paymentId = searchParams.get('paymentID');
 
   // Set the Language based on the language code that's passed
   useEffect(() => {
@@ -77,7 +80,29 @@ const VideoRecognizer = () => {
           const blinkCardResult = await recognizer.getResult();
           if (blinkCardResult.state !== BlinkCardSDK.RecognizerResultState.Empty) {
             setUserMessage(t('completed'));
-            // TODO: add server request to send data.
+
+            //  // Remove spaces from the card number
+            //   const trimmedCardNumber = blinkCardResult?.cardNumber.replace(/\s+/g, '');
+            //  // Extract the needed card numbers
+            //   const firstSixDigits = trimmedCardNumber.substring(0, 6);
+            //   const lastFourDigits = trimmedCardNumber.substring(trimmedCardNumber.length - 4);
+            //   const expiryDate = blinkCardResult?.expiryDate?.originalString;
+            // //  TODO: add server request to send data.
+
+            // try {
+            //   axios.post('endpoint-here', {
+            //     token: userToken,
+            //     paymentId,
+            //     cardHolderName: blinkCardResult.owner,
+            //     prefix: firstSixDigits,
+            //     suffix: lastFourDigits,
+            //     expiryDate,
+            //   })
+            // } catch(err) {
+            //  setFailed(true);
+            //  setUserMessage(t('failed'));
+            // }
+
             setCompleted(true);
           }
 
@@ -119,6 +144,7 @@ const VideoRecognizer = () => {
             {userMessage}
           </p>
           <CompletedSvg show={completed} />
+          <FailedSvg show={false} />
         </div>
       </div>
     </>
