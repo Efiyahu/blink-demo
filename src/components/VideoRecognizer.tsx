@@ -109,9 +109,11 @@ const VideoRecognizer = () => {
       <Navbar />
       <div id="screen-scanning">
         <video id="camera-feed" playsInline></video>
-        <p id="camera-guides" style={isTransparent}>
-          {t('cameraGuide')}
-        </p>
+        {!completed && (
+          <p id="camera-guides" style={isTransparent}>
+            {t('cameraGuide')}
+          </p>
+        )}
 
         <div id="flip-guides">
           <p className="text" style={isTransparent}>
