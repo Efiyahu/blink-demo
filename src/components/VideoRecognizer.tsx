@@ -10,7 +10,6 @@ const VideoRecognizer = () => {
   const [isShown, setIsShown] = useState<boolean>(false);
   const [completed, setCompleted] = useState<boolean>(false);
   const [userMessage, setUserMessage] = useState<string>('');
-  const [response, setResponse] = useState<string>('');
 
   const { t } = useTranslation();
   const location = useLocation();
@@ -78,7 +77,6 @@ const VideoRecognizer = () => {
           const blinkCardResult = await recognizer.getResult();
           if (blinkCardResult.state !== BlinkCardSDK.RecognizerResultState.Empty) {
             setUserMessage(t('completed'));
-            setResponse(JSON.stringify(blinkCardResult));
             // TODO: add server request to send data.
             setCompleted(true);
           }
