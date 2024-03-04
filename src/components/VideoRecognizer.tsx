@@ -6,6 +6,8 @@ import i18n from '../locales';
 import Navbar from './Navbar';
 import CompletedSvg from './CompletedSvg';
 import FailedSvg from './FailedSvg';
+import { EMode } from '../types/env';
+import { getLicenseKeyByEnvironment } from '../utils';
 // import axios from 'axios';
 
 const VideoRecognizer = () => {
@@ -18,10 +20,13 @@ const VideoRecognizer = () => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const language = searchParams.get('language');
+  const currEnvironment = searchParams.get('env') as EMode;
+  const licenseKey = getLicenseKeyByEnvironment(currEnvironment);
   // const userToken = searchParams.get('userToken');
   // const paymentId = searchParams.get('paymentID');
 
   // Set the Language based on the language code that's passed
+  console.log(licenseKey);
   useEffect(() => {
     i18n.changeLanguage(language as string | undefined);
   }, [language]);
@@ -31,9 +36,7 @@ const VideoRecognizer = () => {
     const initializeBlinkCardSDK = async () => {
       // Check if browser is supported
       if (BlinkCardSDK.isBrowserSupported()) {
-        const loadSettings = new BlinkCardSDK.WasmSDKLoadSettings(
-          import.meta.env.VITE_MICROBLINK_LICENSE_KEY
-        );
+        const loadSettings = new BlinkCardSDK.WasmSDKLoadSettings(licenseKey);
 
         try {
           const wasmSDK = await BlinkCardSDK.loadWasmModule(loadSettings);
