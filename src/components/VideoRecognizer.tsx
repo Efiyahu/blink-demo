@@ -22,6 +22,7 @@ const VideoRecognizer = () => {
   const language = searchParams.get('language');
   const currEnvironment = searchParams.get('env') as EMode;
   const licenseKey = getLicenseKeyByEnvironment(currEnvironment);
+
   const userToken = searchParams.get('userToken');
 
   type PaymentMethodRequestType = {
@@ -68,7 +69,9 @@ const VideoRecognizer = () => {
     const initializeBlinkCardSDK = async () => {
       // Check if browser is supported
       if (BlinkCardSDK.isBrowserSupported()) {
-        const loadSettings = new BlinkCardSDK.WasmSDKLoadSettings(licenseKey);
+        const loadSettings = new BlinkCardSDK.WasmSDKLoadSettings(
+          import.meta.env.VITE_MICROBLINK_LICENSE_KEY_DEV
+        );
 
         try {
           const wasmSDK = await BlinkCardSDK.loadWasmModule(loadSettings);
