@@ -34,31 +34,6 @@ const VideoRecognizer = () => {
     token: string | null;
   };
 
-  const verifyPaymentMethod = async ({
-    bin,
-    lastDigits,
-    expiryMonth,
-    expiryYear,
-    cardHolder,
-    token,
-  }: PaymentMethodRequestType) => {
-    axios.post(
-      'v1/payment/verifyPaymentMethod',
-      {
-        bin,
-        lastDigits,
-        expiryYear,
-        expiryMonth,
-        cardHolder,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-  };
-
   // Set the language based on the language of front app
   useEffect(() => {
     i18n.changeLanguage(language as string | undefined);
@@ -66,6 +41,30 @@ const VideoRecognizer = () => {
 
   // Init the blinkcard recognizer and begin recognition
   useEffect(() => {
+    const verifyPaymentMethod = async ({
+      bin,
+      lastDigits,
+      expiryMonth,
+      expiryYear,
+      cardHolder,
+      token,
+    }: PaymentMethodRequestType) =>
+      axios.post(
+        'v1/payment/verifyPaymentMethod',
+        {
+          bin,
+          lastDigits,
+          expiryYear,
+          expiryMonth,
+          cardHolder,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
     const initializeBlinkCardSDK = async () => {
       // Check if browser is supported
       if (BlinkCardSDK.isBrowserSupported()) {
@@ -165,7 +164,7 @@ const VideoRecognizer = () => {
           recognizer?.delete();
         }
       });
-  }, [licenseKey, t, userToken, verifyPaymentMethod]);
+  }, [licenseKey, t, userToken]);
 
   const isTransparent = isShown ? { color: 'white' } : { color: 'black' };
 
