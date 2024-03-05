@@ -181,7 +181,7 @@ const VideoRecognizer = () => {
 
         <div id="flip-guides">
           <p style={isTransparent} className={completed ? 'completed-text' : 'text'}>
-            {userMessage}
+            {userMessage} 14:53
           </p>
           <CompletedSvg show={completed} />
           <FailedSvg show={failed} />
