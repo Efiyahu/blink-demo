@@ -8,12 +8,12 @@ import CompletedSvg from './CompletedSvg';
 import FailedSvg from './FailedSvg';
 import { EMode } from '../types/env';
 import { getLicenseKeyByEnvironment } from '../utils';
-// import axios from 'axios';
+import axios from 'axios';
 
 const VideoRecognizer = () => {
   const [isShown, setIsShown] = useState<boolean>(false);
   const [completed, setCompleted] = useState<boolean>(false);
-  // const [failed, setFailed] = useState<boolean>(false);
+  const [failed, setFailed] = useState<boolean>(false);
   const [userMessage, setUserMessage] = useState<string>('');
 
   const { t } = useTranslation();
@@ -22,11 +22,43 @@ const VideoRecognizer = () => {
   const language = searchParams.get('language');
   const currEnvironment = searchParams.get('env') as EMode;
   const licenseKey = getLicenseKeyByEnvironment(currEnvironment);
-  // const userToken = searchParams.get('userToken');
-  // const paymentId = searchParams.get('paymentID');
+  const userToken = searchParams.get('userToken');
 
-  // Set the Language based on the language code that's passed
-  console.log(licenseKey);
+  type PaymentMethodRequestType = {
+    bin: string;
+    lastDigits: string;
+    expiryYear: number;
+    expiryMonth: number;
+    cardHolder: string;
+    token: string | null;
+  };
+
+  const verifyPaymentMethod = async ({
+    bin,
+    lastDigits,
+    expiryMonth,
+    expiryYear,
+    cardHolder,
+    token,
+  }: PaymentMethodRequestType) => {
+    axios.post(
+      'v1/payment/verifyPaymentMethod',
+      {
+        bin,
+        lastDigits,
+        expiryYear,
+        expiryMonth,
+        cardHolder,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+  };
+
+  // Set the language based on the language of front app
   useEffect(() => {
     i18n.changeLanguage(language as string | undefined);
   }, [language]);
@@ -42,13 +74,15 @@ const VideoRecognizer = () => {
           const wasmSDK = await BlinkCardSDK.loadWasmModule(loadSettings);
           setIsShown(true);
           // The SDK was initialized successfully, you can save the wasmSDK for future use
-          console.log('BlinkCard SDK initialized successfully:', wasmSDK);
           return wasmSDK;
         } catch (error) {
           // Error happened during the initialization of the SDK
+          setFailed(true);
+          setUserMessage(t('errorInitialization'));
           console.error('Error during the initialization of the BlinkCard SDK:', error);
         }
       } else {
+        setUserMessage(t('browserNotSupported'));
         console.log('This browser is not supported by the BlinkCard SDK!');
       }
     };
@@ -84,27 +118,29 @@ const VideoRecognizer = () => {
           if (blinkCardResult.state !== BlinkCardSDK.RecognizerResultState.Empty) {
             setUserMessage(t('completed'));
 
-            //  // Remove spaces from the card number
-            //   const trimmedCardNumber = blinkCardResult?.cardNumber.replace(/\s+/g, '');
-            //  // Extract the needed card numbers
-            //   const firstSixDigits = trimmedCardNumber.substring(0, 6);
-            //   const lastFourDigits = trimmedCardNumber.substring(trimmedCardNumber.length - 4);
-            //   const expiryDate = blinkCardResult?.expiryDate?.originalString;
-            // //  TODO: add server request to send data.
+            // Remove spaces from the card number
+            const trimmedCardNumber = blinkCardResult?.cardNumber.replace(/\s+/g, '');
+            // Extract the needed card numbers
+            const bin = trimmedCardNumber.substring(0, 6);
+            const lastDigits = trimmedCardNumber.substring(trimmedCardNumber.length - 4);
+            const expiryMonth = blinkCardResult?.expiryDate?.month;
+            const expiryYear = blinkCardResult?.expiryDate?.month;
+            const cardHolder = blinkCardResult?.owner;
+            //  TODO: add server request to send data.
 
-            // try {
-            //   axios.post('endpoint-here', {
-            //     token: userToken,
-            //     paymentId,
-            //     cardHolderName: blinkCardResult.owner,
-            //     prefix: firstSixDigits,
-            //     suffix: lastFourDigits,
-            //     expiryDate,
-            //   })
-            // } catch(err) {
-            //  setFailed(true);
-            //  setUserMessage(t('failed'));
-            // }
+            try {
+              await verifyPaymentMethod({
+                bin,
+                lastDigits,
+                expiryMonth,
+                expiryYear,
+                cardHolder,
+                token: userToken,
+              });
+            } catch (err) {
+              setFailed(true);
+              setUserMessage(t('failed'));
+            }
 
             setCompleted(true);
           }
@@ -127,7 +163,7 @@ const VideoRecognizer = () => {
           recognizer?.delete();
         }
       });
-  }, [t]);
+  }, [licenseKey, t]);
 
   const isTransparent = isShown ? { color: 'white' } : { color: 'black' };
 
@@ -147,7 +183,7 @@ const VideoRecognizer = () => {
             {userMessage}
           </p>
           <CompletedSvg show={completed} />
-          <FailedSvg show={false} />
+          <FailedSvg show={failed} />
         </div>
       </div>
     </>

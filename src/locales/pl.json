@@ -2,6 +2,8 @@
   "flip": "Odwróć kartę",
   "cameraGuide": "Nakieruj aparat na kartę płatniczą",
   "errorExtracting": "Nie można wydobyć informacji!",
+  "errorInitialization": "Nie udało się pomyślnie załadować Micro Blink",
+  "browserNotSupported": "Ta przeglądarka nie jest obsługiwana przez SDK BlinkCard!",
   "paymentVerification": "Weryfikacja płatności",
   "completed": "Weryfikacja karty płatniczej zakończona pomyślnie!"
 }
