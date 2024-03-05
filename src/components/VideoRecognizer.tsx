@@ -119,8 +119,6 @@ const VideoRecognizer = () => {
         if (processResult !== BlinkCardSDK.RecognizerResultState.Empty) {
           const blinkCardResult = await recognizer.getResult();
           if (blinkCardResult.state !== BlinkCardSDK.RecognizerResultState.Empty) {
-            setUserMessage(t('completed'));
-
             // Remove spaces from the card number
             const trimmedCardNumber = blinkCardResult?.cardNumber.replace(/\s+/g, '');
             // Extract the needed card numbers
@@ -140,12 +138,12 @@ const VideoRecognizer = () => {
                 cardHolder,
                 token: userToken,
               });
+              setUserMessage(t('completed'));
+              setCompleted(true);
             } catch (err) {
               setFailed(true);
               setUserMessage(t('failed'));
             }
-
-            setCompleted(true);
           }
 
           videoRecognizer?.releaseVideoFeed();
