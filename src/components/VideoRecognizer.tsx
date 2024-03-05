@@ -141,6 +141,7 @@ const VideoRecognizer = () => {
               setUserMessage(t('completed'));
               setCompleted(true);
             } catch (err) {
+              console.log('err', err);
               setFailed(true);
               setUserMessage(t('failed'));
             }
@@ -164,7 +165,7 @@ const VideoRecognizer = () => {
           recognizer?.delete();
         }
       });
-  }, [licenseKey, t]);
+  }, [licenseKey, t, userToken, verifyPaymentMethod]);
 
   const isTransparent = isShown ? { color: 'white' } : { color: 'black' };
 
