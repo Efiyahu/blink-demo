@@ -5,5 +5,7 @@
   "errorInitialization": "Nepodarilo sa úspešne načítať Micro Blink",
   "browserNotSupported": "Táto webová prehliadač nie je podporovaná SDK BlinkCard!",
   "paymentVerification": "Overenie platby",
-  "completed": "Overenie platobnej karty úspešne dokončené!"
+  "completed": "Overenie platobnej karty úspešne dokončené!",
+  "codeFail": "Príliš veľa žiadostí, skúste to znova neskôr.",
+  "alreadyVerified": "Platobná metóda už overená"
 }

@@ -5,5 +5,7 @@
   "errorInitialization": "Could not load micro blink successfully",
   "browserNotSupported": "This browser is not supported by the BlinkCard SDK!",
   "paymentVerification": "Payment Verification",
-  "completed": "Payment Card Verification done successfully!"
+  "completed": "Payment Card Verification done successfully!",
+  "codeFail": "Too many request, try again later",
+  "alreadyVerified": "Payment method already verified"
 }

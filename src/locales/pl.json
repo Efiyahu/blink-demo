@@ -5,5 +5,7 @@
   "errorInitialization": "Nie udało się pomyślnie załadować Micro Blink",
   "browserNotSupported": "Ta przeglądarka nie jest obsługiwana przez SDK BlinkCard!",
   "paymentVerification": "Weryfikacja płatności",
-  "completed": "Weryfikacja karty płatniczej zakończona pomyślnie!"
+  "completed": "Weryfikacja karty płatniczej zakończona pomyślnie!",
+  "codeFail": "Zbyt wiele żądań, spróbuj ponownie później.",
+  "alreadyVerified": "Metoda płatności już zweryfikowana"
 }
