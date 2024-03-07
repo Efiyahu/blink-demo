@@ -130,10 +130,11 @@ const VideoRecognizer = () => {
                   token: userToken,
                 }).then((res) => {
                   if (res.data.message === 'Payment method already verified.') {
-                    setUserMessage('');
-                    setShowLoader(false);
+                    setUserMessage(t('alreadyVerified'));
+                  } else {
+                    setUserMessage(t('completed'));
                   }
-                  setUserMessage(t('completed'));
+                  setShowLoader(false);
                   setCompleted(true);
                 });
               } catch (err) {
