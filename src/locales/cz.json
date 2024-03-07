@@ -2,6 +2,7 @@
   "flip": "Otočte kartu",
   "cameraGuide": "Nasměrujte fotoaparát k platební kartě",
   "errorExtracting": "Není možné extrahovat informace!",
+  "errorVerification": "Ověření selhalo",
   "errorInitialization": "Nepodařilo se úspěšně načíst Micro Blink",
   "browserNotSupported": "Tento prohlížeč není podporován SDK BlinkCard!",
   "paymentVerification": "Ověření platby",

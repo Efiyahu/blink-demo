@@ -36,7 +36,7 @@ const VideoRecognizer = () => {
   const userToken = searchParams.get('userToken');
   const paymentMethodId = searchParams.get('paymentID')?.toString() as string;
 
-  const [continueToScan, setContinueToScan] = useState<boolean>(true);
+  const [continueToScan, setContinueToScan] = useState<boolean>(false);
 
   useEffect(() => {
     i18n.changeLanguage(language as string | undefined);
@@ -121,7 +121,7 @@ const VideoRecognizer = () => {
               try {
                 setShowLoader(true);
                 await verifyPaymentMethod({
-                  paymentMethodId: '129',
+                  paymentMethodId: '137',
                   bin: '411111',
                   lastDigits: '1111',
                   expiryMonth: 12,
@@ -140,7 +140,7 @@ const VideoRecognizer = () => {
               } catch (err) {
                 setFailed(true);
                 setShowLoader(false);
-                setUserMessage(t('failed'));
+                setUserMessage(t('errorVerification'));
               }
             }
 

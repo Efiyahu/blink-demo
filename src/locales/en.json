@@ -2,6 +2,7 @@
   "flip": "Flip the card",
   "cameraGuide": "Point the camera towards Payment card",
   "errorExtracting": "Could not extract information!",
+  "errorVerification": "Verification has failed",
   "errorInitialization": "Could not load micro blink successfully",
   "browserNotSupported": "This browser is not supported by the BlinkCard SDK!",
   "paymentVerification": "Payment Verification",
