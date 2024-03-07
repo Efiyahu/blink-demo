@@ -7,6 +7,7 @@ import Navbar from './Navbar';
 import CompletedSvg from './CompletedSvg';
 import FailedSvg from './FailedSvg';
 import { EMode } from '../types/env';
+import { ScaleLoader } from 'react-spinners';
 import {
   GetActionCodeResponseType,
   VERIFICATION_TYPES,
@@ -24,6 +25,7 @@ const VideoRecognizer = () => {
   const [completed, setCompleted] = useState<boolean>(false);
   const [failed, setFailed] = useState<boolean>(false);
   const [userMessage, setUserMessage] = useState<string>('');
+  const [showLoader, setShowLoader] = useState<boolean>(false);
 
   const { t } = useTranslation();
   const location = useLocation();
@@ -53,18 +55,18 @@ const VideoRecognizer = () => {
               if (data.status) {
                 setContinueToScan(true);
               } else {
-                setUserMessage('codeFail');
+                setUserMessage(t('codeFail'));
                 setFailed(true);
               }
             })
             .catch(() => {
-              setUserMessage('codeFail');
+              setUserMessage(t('codeFail'));
               setFailed(true);
             });
         }
       })
       .catch(() => {
-        setUserMessage('codeFail');
+        setUserMessage(t('codeFail'));
         setFailed(true);
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -117,6 +119,7 @@ const VideoRecognizer = () => {
               // const expiryYear = blinkCardResult?.expiryDate?.month;
               // const cardHolder = blinkCardResult?.owner;
               try {
+                setShowLoader(true);
                 await verifyPaymentMethod({
                   paymentMethodId: '129',
                   bin: '411111',
@@ -128,13 +131,14 @@ const VideoRecognizer = () => {
                 }).then((res) => {
                   if (res.data.message === 'Payment method already verified.') {
                     setUserMessage('');
+                    setShowLoader(false);
                   }
+                  setUserMessage(t('completed'));
+                  setCompleted(true);
                 });
-
-                setUserMessage(t('completed'));
-                setCompleted(true);
               } catch (err) {
                 setFailed(true);
+                setShowLoader(false);
                 setUserMessage(t('failed'));
               }
             }
@@ -166,10 +170,11 @@ const VideoRecognizer = () => {
 
   return (
     <>
+      {showLoader && <div className="backdrop" />}
       <Navbar />
       <div id="screen-scanning">
         {continueToScan && <video id="camera-feed" playsInline></video>}
-        {!completed && (
+        {!completed && !failed && (
           <p id="camera-guides" style={isTransparent}>
             {t('cameraGuide')}
           </p>
@@ -179,6 +184,7 @@ const VideoRecognizer = () => {
           <p style={isTransparent} className={completed ? 'completed-text' : 'text'}>
             {userMessage}
           </p>
+          {showLoader && <ScaleLoader color="#821ec8" className="spinner" />}
           <CompletedSvg show={completed} />
           <FailedSvg show={failed} />
         </div>
