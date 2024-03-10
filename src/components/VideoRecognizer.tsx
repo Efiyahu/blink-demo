@@ -89,6 +89,7 @@ const VideoRecognizer = () => {
           } else {
             setUserMessage(t('failed'));
             setCompleted(false);
+            setIsShown(true);
           }
         })
         // in case server error getting verifying the code
@@ -167,6 +168,7 @@ const VideoRecognizer = () => {
                 setUserMessage(t('completed'));
                 setShowLoader(false);
                 setCompleted(true);
+                setShowButton(false);
                 setIsOpen(true);
               });
             } catch (err) {
