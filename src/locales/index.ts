@@ -1,7 +1,7 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import en from './en.json';
-import cz from './cz.json';
+import cs from './cs.json';
 import sk from './sk.json';
 import pl from './pl.json';
 
@@ -18,8 +18,8 @@ i18n
       sk: {
         translation: sk,
       },
-      cz: {
-        translation: cz,
+      cs: {
+        translation: cs,
       },
     },
     lng: 'en', // if you're using a language detector, do not define the lng option
