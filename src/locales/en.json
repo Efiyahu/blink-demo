@@ -1,12 +1,9 @@
 {
   "flip": "Flip the card",
   "cameraGuide": "Point the camera towards Payment card",
-  "errorExtracting": "Could not extract information!",
-  "errorVerification": "Verification has failed",
-  "errorInitialization": "Could not load micro blink successfully",
-  "browserNotSupported": "This browser is not supported by the BlinkCard SDK!",
+  "browserNotSupported": "This browser is not supported by the Payment Verification Provider!",
   "paymentVerification": "Payment Verification",
-  "completed": "Payment Card Verification done successfully!",
-  "codeFail": "Too many request, try again later",
-  "alreadyVerified": "Payment method already verified"
+  "completed": "Thank you, We received your credit card verification,You'll be notified shortly.",
+  "failed": "Sorry, Something went wrong. Please try reach out to our support team",
+  "exceeded": "Exceeded number of maximum attempts to scan, Please try again later!"
 }

@@ -1,12 +1,9 @@
 {
-  "flip": "Odwróć kartę",
+  "flip": "Obróć kartę",
   "cameraGuide": "Nakieruj aparat na kartę płatniczą",
-  "errorExtracting": "Nie można wydobyć informacji!",
-  "errorVerification": "Weryfikacja nie powiodła się",
-  "errorInitialization": "Nie udało się pomyślnie załadować Micro Blink",
-  "browserNotSupported": "Ta przeglądarka nie jest obsługiwana przez SDK BlinkCard!",
+  "browserNotSupported": "Ta przeglądarka nie jest obsługiwana przez dostawcę weryfikacji płatności!",
   "paymentVerification": "Weryfikacja płatności",
-  "completed": "Weryfikacja karty płatniczej zakończona pomyślnie!",
-  "codeFail": "Zbyt wiele żądań, spróbuj ponownie później.",
-  "alreadyVerified": "Metoda płatności już zweryfikowana"
+  "completed": "Dziękujemy, Otrzymaliśmy potwierdzenie Twojej karty kredytowej. Wkrótce otrzymasz powiadomienie.",
+  "failed": "Przepraszamy, coś poszło nie tak. Skontaktuj się z naszym zespołem wsparcia.",
+  "exceeded": "Przekroczono maksymalną liczbę prób skanowania. Spróbuj ponownie później!"
 }

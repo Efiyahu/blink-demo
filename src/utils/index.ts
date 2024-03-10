@@ -16,18 +16,22 @@ export function getLicenseKeyByEnvironment(env: EMode) {
 
 type InitBlinkCardSDK = {
   setIsShown: React.Dispatch<SetStateAction<boolean>>;
+  setIsOpen: React.Dispatch<SetStateAction<boolean>>;
   setUserMessage: React.Dispatch<SetStateAction<string>>;
-  setFailed: React.Dispatch<SetStateAction<boolean>>;
+  setCompleted: React.Dispatch<SetStateAction<boolean>>;
   browserErrorString: string;
   errorString: string;
+  setShowButton: React.Dispatch<SetStateAction<boolean>>;
 };
 
 export const initializeBlinkCardSDK = async ({
   setIsShown,
-  setFailed,
+  setCompleted,
   setUserMessage,
   browserErrorString,
   errorString,
+  setIsOpen,
+  setShowButton,
 }: InitBlinkCardSDK) => {
   // Check if browser is supported
   if (BlinkCardSDK.isBrowserSupported()) {
@@ -38,17 +42,22 @@ export const initializeBlinkCardSDK = async ({
     try {
       const wasmSDK = await BlinkCardSDK.loadWasmModule(loadSettings);
       setIsShown(true);
+
       // The SDK was initialized successfully, you can save the wasmSDK for future use
       return wasmSDK;
     } catch (error) {
       // Error happened during the initialization of the SDK
-      setFailed(true);
+      setCompleted(false);
       setUserMessage(errorString);
+      setIsOpen(true);
+      setShowButton(true);
       console.error('Error during the initialization of the BlinkCard SDK:', error);
     }
   } else {
     setUserMessage(browserErrorString);
-    console.log('This browser is not supported by the BlinkCard SDK!');
+    setIsOpen(true);
+    setShowButton(false);
+    console.error('This browser is not supported by the BlinkCard SDK!');
   }
 };
 
@@ -64,11 +73,6 @@ type PaymentMethodRequestType = {
   expiryMonth: number;
   cardHolder: string;
   token: string | null;
-};
-
-export type GetActionCodeResponseType = {
-  code: string;
-  expiryTime: number; // in seconds
 };
 
 export type VerifyActionCodeResponseType = {
@@ -101,19 +105,6 @@ export const verifyPaymentMethod = async ({
     }
   );
 
-export const getActionCode = ({ action, token }: { action: string; token: string }) =>
-  axios.post(
-    'https://gwcrm-integration.klips.dev/v1/user/getActionCode',
-    {
-      action,
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
-
 export const validateActionCode = ({
   action,
   code,
@@ -135,3 +126,18 @@ export const validateActionCode = ({
       },
     }
   );
+
+export const getActionCode = ({ action, token }: { action: string; token: string }) =>
+  axios.post(
+    'https://gwcrm-integration.klips.dev/v1/user/getActionCode',
+    {
+      action,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+export const clearLocaleStorage = () => localStorage.clear();

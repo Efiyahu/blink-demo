@@ -1,12 +1,9 @@
 {
   "flip": "Otočte kartu",
-  "cameraGuide": "Zamier kamero na platobnú kartu",
-  "errorExtracting": "Nepodarilo sa extrahovať informácie!",
-  "errorVerification": "Overenie zlyhalo",
-  "errorInitialization": "Nepodarilo sa úspešne načítať Micro Blink",
-  "browserNotSupported": "Táto webová prehliadač nie je podporovaná SDK BlinkCard!",
+  "cameraGuide": "Zamierajte fotoaparátom na platobnú kartu",
+  "browserNotSupported": "Tento prehliadač nie je podporovaný poskytovateľom overenia platby!",
   "paymentVerification": "Overenie platby",
-  "completed": "Overenie platobnej karty úspešne dokončené!",
-  "codeFail": "Príliš veľa žiadostí, skúste to znova neskôr.",
-  "alreadyVerified": "Platobná metóda už overená"
+  "completed": "Ďakujeme, Obrali sme potvrdenie o vašej platobnej karte. Čoskoro dostanete upozornenie.",
+  "failed": "Ospravedlňujeme sa, niečo sa pokazilo. Prosím, obráťte sa na náš podporný tím.",
+  "exceeded": "Prekročený počet maximálnych pokusov o skenovanie. Skúste to prosím neskôr!"
 }

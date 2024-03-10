@@ -4,14 +4,12 @@ import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import i18n from '../locales';
 import Navbar from './Navbar';
-import CompletedSvg from './CompletedSvg';
-import FailedSvg from './FailedSvg';
 import { EMode } from '../types/env';
 import { ScaleLoader } from 'react-spinners';
 import {
-  GetActionCodeResponseType,
   VERIFICATION_TYPES,
   VerifyActionCodeResponseType,
+  clearLocaleStorage,
   getActionCode,
   getLicenseKeyByEnvironment,
   initializeBlinkCardSDK,
@@ -19,22 +17,28 @@ import {
   verifyPaymentMethod,
 } from '../utils';
 import { AxiosResponse } from 'axios';
+import Modal from './Modal';
 
 const VideoRecognizer = () => {
-  const [isShown, setIsShown] = useState<boolean>(false);
-  const [completed, setCompleted] = useState<boolean>(false);
-  const [failed, setFailed] = useState<boolean>(false);
-  const [userMessage, setUserMessage] = useState<string>('');
-  const [showLoader, setShowLoader] = useState<boolean>(false);
-
-  const { t } = useTranslation();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
+  const { t } = useTranslation();
+
+  const [isShown, setIsShown] = useState<boolean>(false);
+  const [completed, setCompleted] = useState<boolean>(false);
+  const [userMessage, setUserMessage] = useState<string>('');
+  const [showLoader, setShowLoader] = useState<boolean>(false);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [showButton, setShowButton] = useState<boolean>(false);
+  const [oneTimeCode, setOneTimeCode] = useState<string>(searchParams.get('otp') as string);
+
   const language = searchParams.get('language');
   const currEnvironment = searchParams.get('env') as EMode;
   const licenseKey = getLicenseKeyByEnvironment(currEnvironment);
   const userToken = searchParams.get('userToken');
-  const paymentMethodId = searchParams.get('paymentID')?.toString() as string;
+  const paymentMethodId = searchParams.get('paymentID') as string;
+  const [retryCount, setRetryCount] = useState<number>(3);
+  const [flipMessage, setFlipMessage] = useState('');
 
   const [continueToScan, setContinueToScan] = useState<boolean>(false);
 
@@ -43,139 +47,201 @@ const VideoRecognizer = () => {
   }, [language]);
 
   useEffect(() => {
-    getActionCode({ action: VERIFICATION_TYPES.PM_VERIFICATION, token: userToken as string })
-      .then(({ data }: AxiosResponse<GetActionCodeResponseType>) => {
-        if (data.expiryTime > 0) {
-          validateActionCode({
-            action: VERIFICATION_TYPES.PM_VERIFICATION,
-            code: data.code,
-            token: userToken as string,
-          })
-            .then(({ data }: AxiosResponse<VerifyActionCodeResponseType>) => {
-              if (data.status) {
-                setContinueToScan(true);
-              } else {
-                setUserMessage(t('codeFail'));
-                setFailed(true);
-              }
-            })
-            .catch(() => {
-              setUserMessage(t('codeFail'));
-              setFailed(true);
-            });
-        }
-      })
-      .catch(() => {
-        setUserMessage(t('codeFail'));
-        setFailed(true);
-      });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const storedCode = localStorage.getItem('oneTimeCode');
+    const storedRetryCount = localStorage.getItem('retryCount');
+
+    if (storedCode) {
+      setOneTimeCode(storedCode);
+    }
+
+    if (storedRetryCount) {
+      setRetryCount(parseInt(storedRetryCount));
+    }
+    window.addEventListener('beforeunload', clearLocaleStorage);
+
+    return () => window.addEventListener('beforeunload', clearLocaleStorage);
   }, []);
+
+  useEffect(() => {
+    // Save code state and retry count to localStorage
+    localStorage.setItem('oneTimeCode', oneTimeCode);
+    localStorage.setItem('retryCount', retryCount.toString());
+  }, [oneTimeCode, retryCount]);
+
+  useEffect(() => {
+    if (!oneTimeCode) {
+      setContinueToScan(false);
+      setUserMessage(t('failed'));
+      setCompleted(false);
+      setShowButton(false);
+      setIsOpen(true);
+    } else {
+      validateActionCode({
+        action: VERIFICATION_TYPES.PM_VERIFICATION,
+        code: oneTimeCode,
+        token: userToken as string,
+      })
+        .then(({ data }: AxiosResponse<VerifyActionCodeResponseType>) => {
+          // in case the otp is wrong / empty
+          if (data.status) {
+            setContinueToScan(true);
+            setIsOpen(false);
+          } else {
+            setUserMessage(t('failed'));
+            setCompleted(false);
+          }
+        })
+        // in case server error getting verifying the code
+        .catch(() => {
+          setUserMessage(t('failed'));
+          setCompleted(false);
+          setIsOpen(true);
+        });
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [oneTimeCode]);
 
   // Init the blinkcard recognizer and begin recognition
   useEffect(() => {
-    if (continueToScan)
-      initializeBlinkCardSDK({
-        setIsShown,
-        setUserMessage,
-        browserErrorString: t('browserNotSupported'),
-        errorString: t('errorInitialization'),
-        setFailed,
+    if (retryCount === 0) {
+      setIsOpen(true);
+      setUserMessage('failed');
+    } else continueToScan && retryCount > 0;
+    initializeBlinkCardSDK({
+      setIsShown,
+      setIsOpen,
+      setShowButton,
+      setUserMessage,
+      browserErrorString: t('browserNotSupported'),
+      errorString: t('failed'),
+      setCompleted,
+    })
+      .then(async (wasmSDK) => {
+        const callbacks = {
+          onFirstSideResult: () => setFlipMessage(t('flip')),
+        };
+        const recognizer = await BlinkCardSDK.createBlinkCardRecognizer(wasmSDK);
+        const recognizerRunner = await BlinkCardSDK.createRecognizerRunner(
+          wasmSDK,
+          [recognizer],
+          false,
+          callbacks
+        );
+        return { recognizerRunner, recognizer };
       })
-        .then(async (wasmSDK) => {
-          const callbacks = {
-            onFirstSideResult: () => setUserMessage(t('flip')),
-          };
-          const recognizer = await BlinkCardSDK.createBlinkCardRecognizer(wasmSDK);
-          const recognizerRunner = await BlinkCardSDK.createRecognizerRunner(
-            wasmSDK,
-            [recognizer],
-            false,
-            callbacks
+      .then(async ({ recognizerRunner, recognizer }) => {
+        const cameraFeed = document.getElementById('camera-feed') as HTMLVideoElement;
+        const videoRecognizer =
+          await BlinkCardSDK.VideoRecognizer.createVideoRecognizerFromCameraStream(
+            cameraFeed,
+            recognizerRunner
           );
-          return { recognizerRunner, recognizer };
-        })
-        .then(async ({ recognizerRunner, recognizer }) => {
-          const cameraFeed = document.getElementById('camera-feed') as HTMLVideoElement;
-          const videoRecognizer =
-            await BlinkCardSDK.VideoRecognizer.createVideoRecognizerFromCameraStream(
-              cameraFeed,
-              recognizerRunner
-            );
-          return { videoRecognizer, recognizer, recognizerRunner };
-        })
-        .then(async ({ videoRecognizer, recognizer, recognizerRunner }) => {
-          const processResult = await videoRecognizer.recognize();
+        return { videoRecognizer, recognizer, recognizerRunner };
+      })
+      .then(async ({ videoRecognizer, recognizer, recognizerRunner }) => {
+        const processResult = await videoRecognizer.recognize();
 
-          if (processResult !== BlinkCardSDK.RecognizerResultState.Empty) {
-            const blinkCardResult = await recognizer.getResult();
-            if (blinkCardResult.state !== BlinkCardSDK.RecognizerResultState.Empty) {
-              // Remove spaces from the card number
-              // const trimmedCardNumber = blinkCardResult?.cardNumber.replace(/\s+/g, '');
-              // Extract the needed card numbers
-              // const bin = trimmedCardNumber.substring(0, 6);
-              // const lastDigits = trimmedCardNumber.substring(trimmedCardNumber.length - 4);
-              // const expiryMonth = blinkCardResult?.expiryDate?.month;
-              // const expiryYear = blinkCardResult?.expiryDate?.month;
-              // const cardHolder = blinkCardResult?.owner;
-              try {
-                setShowLoader(true);
-                await verifyPaymentMethod({
-                  paymentMethodId: '137',
-                  bin: '411111',
-                  lastDigits: '1111',
-                  expiryMonth: 12,
-                  expiryYear: 26,
-                  cardHolder: 'test test',
-                  token: userToken,
-                }).then((res) => {
-                  if (res.data.message === 'Payment method already verified.') {
-                    setUserMessage(t('alreadyVerified'));
-                  } else {
-                    setUserMessage(t('completed'));
-                  }
-                  setShowLoader(false);
-                  setCompleted(true);
-                });
-              } catch (err) {
-                setFailed(true);
+        if (processResult !== BlinkCardSDK.RecognizerResultState.Empty) {
+          const blinkCardResult = await recognizer.getResult();
+          if (blinkCardResult.state !== BlinkCardSDK.RecognizerResultState.Empty) {
+            // Remove spaces from the card number
+            // const trimmedCardNumber = blinkCardResult?.cardNumber.replace(/\s+/g, '');
+            // Extract the needed card numbers
+            // const bin = trimmedCardNumber.substring(0, 6);
+            // const lastDigits = trimmedCardNumber.substring(trimmedCardNumber.length - 4);
+            // const expiryMonth = blinkCardResult?.expiryDate?.month;
+            // const expiryYear = blinkCardResult?.expiryDate?.month;
+            // const cardHolder = blinkCardResult?.owner;
+            try {
+              setShowLoader(true);
+              await verifyPaymentMethod({
+                paymentMethodId,
+                bin: '411111',
+                lastDigits: '1111',
+                expiryMonth: 12,
+                expiryYear: 26,
+                cardHolder: 'test test',
+                token: userToken,
+              }).then(() => {
+                setUserMessage(t('completed'));
                 setShowLoader(false);
-                setUserMessage(t('errorVerification'));
-              }
+                setCompleted(true);
+                setIsOpen(true);
+              });
+            } catch (err) {
+              setCompleted(false);
+              setShowLoader(false);
+              setUserMessage(t('failed'));
+              setShowButton(false);
+              setIsOpen(true);
             }
-
-            videoRecognizer?.releaseVideoFeed();
-            setIsShown(false);
-            // Release memory on WebAssembly heap used by the RecognizerRunner
-            recognizerRunner?.delete();
-
-            // Release memory on WebAssembly heap used by the recognizer
-            recognizer?.delete();
-          } else {
-            setUserMessage(t('errorExtracting'));
-            videoRecognizer?.releaseVideoFeed();
-            setIsShown(false);
-            // Release memory on WebAssembly heap used by the RecognizerRunner
-            recognizerRunner?.delete();
-
-            // Release memory on WebAssembly heap used by the recognizer
-            recognizer?.delete();
           }
-        })
-        .catch(() => {
-          setUserMessage(t('errorInitialization'));
-        });
-  }, [licenseKey, t, userToken, continueToScan, paymentMethodId]);
+
+          videoRecognizer?.releaseVideoFeed();
+          setIsShown(false);
+          // Release memory on WebAssembly heap used by the RecognizerRunner
+          recognizerRunner?.delete();
+          // Release memory on WebAssembly heap used by the recognizer
+          recognizer?.delete();
+        } else {
+          // data is empty we would like to retry
+          setUserMessage(t('failed'));
+          videoRecognizer?.releaseVideoFeed();
+          setIsShown(true);
+          setShowButton(false);
+          // Release memory on WebAssembly heap used by the RecognizerRunner
+          recognizerRunner?.delete();
+
+          // Release memory on WebAssembly heap used by the recognizer
+          recognizer?.delete();
+        }
+      })
+      .catch(() => {
+        setShowButton(true);
+        setUserMessage(t('failed'));
+      });
+  }, [licenseKey, t, userToken, continueToScan, paymentMethodId, retryCount]);
 
   const isTransparent = isShown ? { color: 'white' } : { color: 'black' };
 
+  const handleRetry = async () => {
+    // Decrement retry count and trigger scanning again
+    setRetryCount((prevCount) => prevCount - 1);
+    setIsOpen(false);
+    setContinueToScan(true);
+    setUserMessage('');
+    setFlipMessage('');
+
+    try {
+      const { data } = await getActionCode({
+        action: 'pmVerification',
+        token: userToken as string,
+      });
+      if (data.response.err) {
+        setUserMessage('exceeded');
+        setIsOpen(true);
+        setShowButton(false);
+        setContinueToScan(false);
+      } else {
+        setOneTimeCode(data.code);
+        setIsOpen(false);
+        setContinueToScan(true);
+      }
+    } catch (error) {
+      setUserMessage('exceeded');
+      setShowButton(false);
+      setIsOpen(true);
+      setContinueToScan(false);
+    }
+  };
+
   return (
     <>
-      {showLoader && <div className="backdrop" />}
       <Navbar />
       <div id="screen-scanning">
         {continueToScan && <video id="camera-feed" playsInline></video>}
-        {!completed && !failed && (
+        {!completed && !isOpen && (
           <p id="camera-guides" style={isTransparent}>
             {t('cameraGuide')}
           </p>
@@ -183,13 +249,19 @@ const VideoRecognizer = () => {
 
         <div id="flip-guides">
           <p style={isTransparent} className={completed ? 'completed-text' : 'text'}>
-            {userMessage}
+            {flipMessage}
           </p>
           {showLoader && <ScaleLoader color="#821ec8" className="spinner" />}
-          <CompletedSvg show={completed} />
-          <FailedSvg show={failed} />
         </div>
       </div>
+      <Modal
+        open={isOpen}
+        onClose={() => setIsOpen(false)}
+        type={completed ? 'success' : 'failure'}
+        message={userMessage}
+        btnText={showButton && retryCount > 0 ? 'Try Again' : ''}
+        onClickBtn={retryCount > 0 ? handleRetry : undefined}
+      />
     </>
   );
 };
