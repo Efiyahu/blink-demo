@@ -76,6 +76,7 @@ const VideoRecognizer = () => {
       setShowButton(false);
       setIsOpen(true);
     } else {
+      setShowLoader(true);
       validateActionCode({
         action: VERIFICATION_TYPES.PM_VERIFICATION,
         code: oneTimeCode,
@@ -83,6 +84,7 @@ const VideoRecognizer = () => {
       })
         .then(({ data }: AxiosResponse<VerifyActionCodeResponseType>) => {
           // in case the otp is wrong / empty
+          setShowLoader(false);
           if (data.status) {
             setContinueToScan(true);
             setIsOpen(false);
@@ -94,6 +96,7 @@ const VideoRecognizer = () => {
         })
         // in case server error getting verifying the code
         .catch(() => {
+          setShowLoader(false);
           setUserMessage(t('failed'));
           setCompleted(false);
           setIsOpen(true);
@@ -108,101 +111,100 @@ const VideoRecognizer = () => {
     if (retryCount === 0) {
       setIsOpen(true);
       setUserMessage('failed');
-    } else continueToScan && retryCount > 0;
-    initializeBlinkCardSDK({
-      setIsShown,
-      setIsOpen,
-      setShowButton,
-      setUserMessage,
-      browserErrorString: t('browserNotSupported'),
-      errorString: t('failed'),
-      setCompleted,
-    })
-      .then(async (wasmSDK) => {
-        const callbacks = {
-          onFirstSideResult: () => setFlipMessage(t('flip')),
-        };
-        const recognizer = await BlinkCardSDK.createBlinkCardRecognizer(wasmSDK);
-        const recognizerRunner = await BlinkCardSDK.createRecognizerRunner(
-          wasmSDK,
-          [recognizer],
-          false,
-          callbacks
-        );
-        return { recognizerRunner, recognizer };
+    } else if (continueToScan && retryCount > 0) {
+      setShowLoader(true);
+      initializeBlinkCardSDK({
+        setIsShown,
+        setIsOpen,
+        setShowButton,
+        setUserMessage,
+        browserErrorString: t('browserNotSupported'),
+        errorString: t('failed'),
+        setCompleted,
       })
-      .then(async ({ recognizerRunner, recognizer }) => {
-        const cameraFeed = document.getElementById('camera-feed') as HTMLVideoElement;
-        const videoRecognizer =
-          await BlinkCardSDK.VideoRecognizer.createVideoRecognizerFromCameraStream(
-            cameraFeed,
-            recognizerRunner
+        .then(async (wasmSDK) => {
+          setShowLoader(false);
+          const callbacks = {
+            onFirstSideResult: () => setFlipMessage(t('flip')),
+          };
+          const recognizer = await BlinkCardSDK.createBlinkCardRecognizer(wasmSDK);
+          const recognizerRunner = await BlinkCardSDK.createRecognizerRunner(
+            wasmSDK,
+            [recognizer],
+            false,
+            callbacks
           );
-        return { videoRecognizer, recognizer, recognizerRunner };
-      })
-      .then(async ({ videoRecognizer, recognizer, recognizerRunner }) => {
-        const processResult = await videoRecognizer.recognize();
+          return { recognizerRunner, recognizer };
+        })
+        .then(async ({ recognizerRunner, recognizer }) => {
+          const cameraFeed = document.getElementById('camera-feed') as HTMLVideoElement;
+          const videoRecognizer =
+            await BlinkCardSDK.VideoRecognizer.createVideoRecognizerFromCameraStream(
+              cameraFeed,
+              recognizerRunner
+            );
+          return { videoRecognizer, recognizer, recognizerRunner };
+        })
+        .then(async ({ videoRecognizer, recognizer, recognizerRunner }) => {
+          const processResult = await videoRecognizer.recognize();
 
-        if (processResult !== BlinkCardSDK.RecognizerResultState.Empty) {
-          const blinkCardResult = await recognizer.getResult();
-          if (blinkCardResult.state !== BlinkCardSDK.RecognizerResultState.Empty) {
-            // Remove spaces from the card number
-            // const trimmedCardNumber = blinkCardResult?.cardNumber.replace(/\s+/g, '');
-            // Extract the needed card numbers
-            // const bin = trimmedCardNumber.substring(0, 6);
-            // const lastDigits = trimmedCardNumber.substring(trimmedCardNumber.length - 4);
-            // const expiryMonth = blinkCardResult?.expiryDate?.month;
-            // const expiryYear = blinkCardResult?.expiryDate?.month;
-            // const cardHolder = blinkCardResult?.owner;
-            try {
-              setShowLoader(true);
-              await verifyPaymentMethod({
-                paymentMethodId,
-                bin: '411111',
-                lastDigits: '1111',
-                expiryMonth: 12,
-                expiryYear: 26,
-                cardHolder: 'test test',
-                token: userToken,
-              }).then(() => {
-                setUserMessage(t('completed'));
+          if (processResult !== BlinkCardSDK.RecognizerResultState.Empty) {
+            const blinkCardResult = await recognizer.getResult();
+            if (blinkCardResult.state !== BlinkCardSDK.RecognizerResultState.Empty) {
+              // Remove spaces from the card number
+              // const trimmedCardNumber = blinkCardResult?.cardNumber.replace(/\s+/g, '');
+              // Extract the needed card numbers
+              // const bin = trimmedCardNumber.substring(0, 6);
+              // const lastDigits = trimmedCardNumber.substring(trimmedCardNumber.length - 4);
+              // const expiryMonth = blinkCardResult?.expiryDate?.month;
+              // const expiryYear = blinkCardResult?.expiryDate?.month;
+              // const cardHolder = blinkCardResult?.owner;
+              try {
+                setShowLoader(true);
+                await verifyPaymentMethod({
+                  paymentMethodId,
+                  bin: '401200',
+                  lastDigits: '7777',
+                  expiryMonth: 12,
+                  expiryYear: 26,
+                  cardHolder: 'test test',
+                  token: userToken,
+                }).then(() => {
+                  setUserMessage(t('completed'));
+                  setShowLoader(false);
+                  setCompleted(true);
+                  setShowButton(false);
+                  setIsOpen(true);
+                });
+              } catch (err) {
+                setCompleted(false);
                 setShowLoader(false);
-                setCompleted(true);
+                setUserMessage(t('failed'));
                 setShowButton(false);
                 setIsOpen(true);
-              });
-            } catch (err) {
-              setCompleted(false);
-              setShowLoader(false);
-              setUserMessage(t('failed'));
-              setShowButton(false);
-              setIsOpen(true);
+              }
             }
+
+            videoRecognizer?.releaseVideoFeed();
+            setIsShown(false);
+            // Release memory on WebAssembly heap used by the RecognizerRunner
+            recognizerRunner?.delete();
+            // Release memory on WebAssembly heap used by the recognizer
+            recognizer?.delete();
+          } else {
+            // data is empty we would like to retry
+            setUserMessage(t('failed'));
+            videoRecognizer?.releaseVideoFeed();
+            setIsShown(true);
+            setShowButton(false);
+            // Release memory on WebAssembly heap used by the RecognizerRunner
+            recognizerRunner?.delete();
+
+            // Release memory on WebAssembly heap used by the recognizer
+            recognizer?.delete();
           }
-
-          videoRecognizer?.releaseVideoFeed();
-          setIsShown(false);
-          // Release memory on WebAssembly heap used by the RecognizerRunner
-          recognizerRunner?.delete();
-          // Release memory on WebAssembly heap used by the recognizer
-          recognizer?.delete();
-        } else {
-          // data is empty we would like to retry
-          setUserMessage(t('failed'));
-          videoRecognizer?.releaseVideoFeed();
-          setIsShown(true);
-          setShowButton(false);
-          // Release memory on WebAssembly heap used by the RecognizerRunner
-          recognizerRunner?.delete();
-
-          // Release memory on WebAssembly heap used by the recognizer
-          recognizer?.delete();
-        }
-      })
-      .catch(() => {
-        setShowButton(true);
-        setUserMessage(t('failed'));
-      });
+        });
+    }
   }, [licenseKey, t, userToken, continueToScan, paymentMethodId, retryCount]);
 
   const isTransparent = isShown ? { color: 'white' } : { color: 'black' };
@@ -256,14 +258,16 @@ const VideoRecognizer = () => {
           {showLoader && <ScaleLoader color="#821ec8" className="spinner" />}
         </div>
       </div>
-      <Modal
-        open={isOpen}
-        onClose={() => setIsOpen(false)}
-        type={completed ? 'success' : 'failure'}
-        message={userMessage}
-        btnText={showButton && retryCount > 0 ? 'Try Again' : ''}
-        onClickBtn={retryCount > 0 ? handleRetry : undefined}
-      />
+      {!showLoader && (
+        <Modal
+          open={isOpen}
+          onClose={() => setIsOpen(false)}
+          type={completed ? 'success' : 'failure'}
+          message={userMessage}
+          btnText={showButton && retryCount > 0 ? 'Try Again' : ''}
+          onClickBtn={retryCount > 0 ? handleRetry : undefined}
+        />
+      )}
     </>
   );
 };
