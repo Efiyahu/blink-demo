@@ -163,8 +163,8 @@ const VideoRecognizer = () => {
                 setShowLoader(true);
                 await verifyPaymentMethod({
                   paymentMethodId,
-                  bin: '476134',
-                  lastDigits: '1390',
+                  bin: '401200',
+                  lastDigits: '7777',
                   expiryMonth: 12,
                   expiryYear: 26,
                   cardHolder: 'test test',
@@ -261,7 +261,7 @@ const VideoRecognizer = () => {
       {!showLoader && (
         <Modal
           open={isOpen}
-          onClose={() => setIsOpen(false)}
+          onClose={() => console.log('modify close button')}
           type={completed ? 'success' : 'failure'}
           message={userMessage}
           btnText={showButton && retryCount > 0 ? 'Try Again' : ''}

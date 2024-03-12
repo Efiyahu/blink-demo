@@ -64,7 +64,8 @@ textarea {
   left: 0;
   right: 0;
   text-align: center;
-  font-weight: bold;
+  font-size: 14px;
+  padding: 0 10px;
 }
 
 .text {
