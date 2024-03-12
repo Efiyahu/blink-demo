@@ -1,6 +1,6 @@
 {
   "flip": "Otočte kartu",
-  "cameraGuide": "Nasměrujte fotoaparát na platební kartu",
+  "cameraGuide": "Nasměrujte fotoaparát směrem k platební kartě (nejprve stranu s číslem kreditní karty!).",
   "browserNotSupported": "Tento prohlížeč není podporován poskytovatelem ověření platby!",
   "paymentVerification": "Ověření platby",
   "completed": "Děkujeme, Obdrželi jsme potvrzení o vaší platební kartě. Brzy obdržíte upozornění.",

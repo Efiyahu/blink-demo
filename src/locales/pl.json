@@ -1,6 +1,6 @@
 {
   "flip": "Obróć kartę",
-  "cameraGuide": "Nakieruj aparat na kartę płatniczą",
+  "cameraGuide": "Skieruj aparat w stronę karty płatniczej (najpierw strona z numerem karty kredytowej!).",
   "browserNotSupported": "Ta przeglądarka nie jest obsługiwana przez dostawcę weryfikacji płatności!",
   "paymentVerification": "Weryfikacja płatności",
   "completed": "Dziękujemy, Otrzymaliśmy potwierdzenie Twojej karty kredytowej. Wkrótce otrzymasz powiadomienie.",

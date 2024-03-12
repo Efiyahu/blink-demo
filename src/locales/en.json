@@ -1,6 +1,6 @@
 {
   "flip": "Flip the card",
-  "cameraGuide": "Point the camera towards Payment card",
+  "cameraGuide": "Point the camera towards Payment card (credit card number side first!)",
   "browserNotSupported": "This browser is not supported by the Payment Verification Provider!",
   "paymentVerification": "Payment Verification",
   "completed": "Thank you, We received your credit card verification,You'll be notified shortly.",

@@ -48,6 +48,8 @@ export const initializeBlinkCardSDK = async ({
     } catch (error) {
       // Error happened during the initialization of the SDK
       setCompleted(false);
+      setIsOpen(true);
+      setShowButton(true);
       setUserMessage(errorString);
       console.error('Error during the initialization of the BlinkCard SDK:', error);
     }

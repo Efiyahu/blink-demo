@@ -40,7 +40,7 @@ const VideoRecognizer = () => {
   const [retryCount, setRetryCount] = useState<number>(3);
   const [flipMessage, setFlipMessage] = useState('');
 
-  const [continueToScan, setContinueToScan] = useState<boolean>(false);
+  const [continueToScan, setContinueToScan] = useState<boolean>(true);
 
   useEffect(() => {
     i18n.changeLanguage(language as string | undefined);
@@ -110,7 +110,7 @@ const VideoRecognizer = () => {
   useEffect(() => {
     if (retryCount === 0) {
       setIsOpen(true);
-      setUserMessage('failed');
+      setUserMessage(t('failed'));
     } else if (continueToScan && retryCount > 0) {
       setShowLoader(true);
       initializeBlinkCardSDK({
@@ -163,8 +163,8 @@ const VideoRecognizer = () => {
                 setShowLoader(true);
                 await verifyPaymentMethod({
                   paymentMethodId,
-                  bin: '401200',
-                  lastDigits: '7777',
+                  bin: '476134',
+                  lastDigits: '1390',
                   expiryMonth: 12,
                   expiryYear: 26,
                   cardHolder: 'test test',
@@ -223,7 +223,7 @@ const VideoRecognizer = () => {
         token: userToken as string,
       });
       if (data.response.err) {
-        setUserMessage('exceeded');
+        setUserMessage(t('exceeded'));
         setIsOpen(true);
         setShowButton(false);
         setContinueToScan(false);
@@ -233,7 +233,7 @@ const VideoRecognizer = () => {
         setContinueToScan(true);
       }
     } catch (error) {
-      setUserMessage('exceeded');
+      setUserMessage(t('exceeded'));
       setShowButton(false);
       setIsOpen(true);
       setContinueToScan(false);
