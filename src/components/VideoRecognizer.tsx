@@ -1,5 +1,5 @@
 import * as BlinkCardSDK from '@microblink/blinkcard-in-browser-sdk';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import i18n from '../locales';
@@ -41,6 +41,8 @@ const VideoRecognizer = () => {
   const [flipMessage, setFlipMessage] = useState('');
 
   const [continueToScan, setContinueToScan] = useState<boolean>(true);
+
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     i18n.changeLanguage(language as string | undefined);
@@ -152,22 +154,22 @@ const VideoRecognizer = () => {
             const blinkCardResult = await recognizer.getResult();
             if (blinkCardResult.state !== BlinkCardSDK.RecognizerResultState.Empty) {
               // Remove spaces from the card number
-              // const trimmedCardNumber = blinkCardResult?.cardNumber.replace(/\s+/g, '');
-              // Extract the needed card numbers
-              // const bin = trimmedCardNumber.substring(0, 6);
-              // const lastDigits = trimmedCardNumber.substring(trimmedCardNumber.length - 4);
-              // const expiryMonth = blinkCardResult?.expiryDate?.month;
-              // const expiryYear = blinkCardResult?.expiryDate?.month;
-              // const cardHolder = blinkCardResult?.owner;
+              const trimmedCardNumber = blinkCardResult?.cardNumber.replace(/\s+/g, '');
+              //  Extract the needed card numbers
+              const bin = trimmedCardNumber.substring(0, 6);
+              const lastDigits = trimmedCardNumber.substring(trimmedCardNumber.length - 4);
+              const expiryMonth = blinkCardResult?.expiryDate?.month;
+              const expiryYear = blinkCardResult?.expiryDate?.month;
+              const cardHolder = blinkCardResult?.owner;
               try {
                 setShowLoader(true);
                 await verifyPaymentMethod({
                   paymentMethodId,
-                  bin: '401200',
-                  lastDigits: '7777',
-                  expiryMonth: 12,
-                  expiryYear: 26,
-                  cardHolder: 'test test',
+                  bin,
+                  lastDigits,
+                  expiryMonth,
+                  expiryYear,
+                  cardHolder,
                   token: userToken,
                 }).then(() => {
                   setUserMessage(t('completed'));
@@ -203,7 +205,8 @@ const VideoRecognizer = () => {
             // Release memory on WebAssembly heap used by the recognizer
             recognizer?.delete();
           }
-        });
+        })
+        .catch();
     }
   }, [licenseKey, t, userToken, continueToScan, paymentMethodId, retryCount]);
 
@@ -233,7 +236,7 @@ const VideoRecognizer = () => {
         setContinueToScan(true);
       }
     } catch (error) {
-      setUserMessage(t('exceeded'));
+      setUserMessage(t('failed'));
       setShowButton(false);
       setIsOpen(true);
       setContinueToScan(false);
@@ -244,7 +247,7 @@ const VideoRecognizer = () => {
     <>
       <Navbar />
       <div id="screen-scanning">
-        {continueToScan && <video id="camera-feed" playsInline></video>}
+        {continueToScan && <video ref={videoRef} id="camera-feed" playsInline />}
         {!completed && !isOpen && (
           <p id="camera-guides" style={isTransparent}>
             {t('cameraGuide')}
@@ -261,7 +264,6 @@ const VideoRecognizer = () => {
       {!showLoader && (
         <Modal
           open={isOpen}
-          onClose={() => console.log('modify close button')}
           type={completed ? 'success' : 'failure'}
           message={userMessage}
           btnText={showButton && retryCount > 0 ? 'Try Again' : ''}
